@@ -9,7 +9,7 @@ export async function POST(req: NextRequest) {
       return NextResponse.json('Not enough data to checkout', {
         headers: {
           'Access-Control-Allow-Origin': '*',
-          'Access-Control-Allow-Methods': 'POST',
+          'Access-Control-Allow-Methods': 'POST,GET',
           'Access-Control-Allow-Headers': 'Content-Type, Authorization',
         },
         status: 400,
@@ -49,7 +49,7 @@ export async function POST(req: NextRequest) {
     return NextResponse.json(session, {
       headers: {
         'Access-Control-Allow-Origin': '*',
-        'Access-Control-Allow-Methods': 'POST',
+        'Access-Control-Allow-Methods': 'POST,GET',
         'Access-Control-Allow-Headers': 'Content-Type, Authorization',
       },
       status: 200,
@@ -59,7 +59,7 @@ export async function POST(req: NextRequest) {
     return NextResponse.json('Internal Server Error', {
       headers: {
         'Access-Control-Allow-Origin': '*',
-        'Access-Control-Allow-Methods': 'POST',
+        'Access-Control-Allow-Methods': 'POST,GET',
         'Access-Control-Allow-Headers': 'Content-Type, Authorization',
       },
       status: 500,
