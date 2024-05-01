@@ -1,37 +1,34 @@
-import { NextRequest, NextResponse } from "next/server";
-import { stripe } from "@/lib/stripe";
-
-const corsHeaders = {
-  "Access-Control-Allow-Origin": "*",
-  "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, OPTIONS",
-  "Access-Control-Allow-Headers": "Content-Type, Authorization",
-};
-
-export async function OPTIONS() {
-  return NextResponse.json({}, { headers: corsHeaders });
-}
+import { NextRequest, NextResponse } from 'next/server';
+import { stripe } from '@/lib/stripe';
 
 export async function POST(req: NextRequest) {
   try {
     const { cartItems, customer } = await req.json();
 
     if (!cartItems || !customer) {
-      return new NextResponse("Not enough data to checkout", { status: 400 });
+      return new NextResponse('Not enough data to checkout', {
+        headers: {
+          'Access-Control-Allow-Origin': '*',
+          'Access-Control-Allow-Methods': 'POST',
+          'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+        },
+        status: 400,
+      });
     }
 
     const session = await stripe.checkout.sessions.create({
-      payment_method_types: ["card"],
-      mode: "payment",
+      payment_method_types: ['card'],
+      mode: 'payment',
       shipping_address_collection: {
-        allowed_countries: ["US", "CA"],
+        allowed_countries: ['US', 'CA'],
       },
       shipping_options: [
-        { shipping_rate: "shr_1MfufhDgraNiyvtnDGef2uwK" },
-        { shipping_rate: "shr_1OpHFHDgraNiyvtnOY4vDjuY" },
+        { shipping_rate: 'shr_1MfufhDgraNiyvtnDGef2uwK' },
+        { shipping_rate: 'shr_1OpHFHDgraNiyvtnOY4vDjuY' },
       ],
       line_items: cartItems.map((cartItem: any) => ({
         price_data: {
-          currency: "cad",
+          currency: 'cad',
           product_data: {
             name: cartItem.item.title,
             metadata: {
@@ -49,9 +46,15 @@ export async function POST(req: NextRequest) {
       cancel_url: `${process.env.ECOMMERCE_STORE_URL}/cart`,
     });
 
-    return NextResponse.json(session, { headers: corsHeaders });
+    return NextResponse.json(session, {
+      headers: {
+        'Access-Control-Allow-Origin': '*',
+        'Access-Control-Allow-Methods': 'POST',
+        'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+      },
+    });
   } catch (err) {
-    console.log("[checkout_POST]", err);
-    return new NextResponse("Internal Server Error", { status: 500 });
+    console.log('[checkout_POST]', err);
+    return new NextResponse('Internal Server Error', { status: 500 });
   }
 }
