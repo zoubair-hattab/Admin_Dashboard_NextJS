@@ -1,19 +1,22 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { stripe } from '@/lib/stripe';
 
+const corsHeaders = {
+  'Access-Control-Allow-Origin': '*',
+  'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
+  'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+};
+
+export async function OPTIONS() {
+  return NextResponse.json({}, { headers: corsHeaders });
+}
+
 export async function POST(req: NextRequest) {
   try {
     const { cartItems, customer } = await req.json();
 
     if (!cartItems || !customer) {
-      return NextResponse.json('Not enough data to checkout', {
-        headers: {
-          'Access-Control-Allow-Origin': '*',
-          'Access-Control-Allow-Methods': 'POST,GET',
-          'Access-Control-Allow-Headers': 'Content-Type, Authorization',
-        },
-        status: 400,
-      });
+      return new NextResponse('Not enough data to checkout', { status: 400 });
     }
 
     const session = await stripe.checkout.sessions.create({
@@ -46,23 +49,9 @@ export async function POST(req: NextRequest) {
       cancel_url: `${process.env.ECOMMERCE_STORE_URL}/cart`,
     });
 
-    return NextResponse.json(session, {
-      headers: {
-        'Access-Control-Allow-Origin': '*',
-        'Access-Control-Allow-Methods': 'POST,GET',
-        'Access-Control-Allow-Headers': 'Content-Type, Authorization',
-      },
-      status: 200,
-    });
+    return NextResponse.json(session, { headers: corsHeaders });
   } catch (err) {
     console.log('[checkout_POST]', err);
-    return NextResponse.json('Internal Server Error', {
-      headers: {
-        'Access-Control-Allow-Origin': '*',
-        'Access-Control-Allow-Methods': 'POST,GET',
-        'Access-Control-Allow-Headers': 'Content-Type, Authorization',
-      },
-      status: 500,
-    });
+    return new NextResponse('Internal Server Error', { status: 500 });
   }
 }
