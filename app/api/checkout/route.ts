@@ -6,7 +6,7 @@ export async function POST(req: NextRequest) {
     const { cartItems, customer } = await req.json();
 
     if (!cartItems || !customer) {
-      return new NextResponse('Not enough data to checkout', {
+      return NextResponse.json('Not enough data to checkout', {
         headers: {
           'Access-Control-Allow-Origin': '*',
           'Access-Control-Allow-Methods': 'POST',
@@ -56,7 +56,7 @@ export async function POST(req: NextRequest) {
     });
   } catch (err) {
     console.log('[checkout_POST]', err);
-    return new NextResponse('Internal Server Error', {
+    return NextResponse.json('Internal Server Error', {
       headers: {
         'Access-Control-Allow-Origin': '*',
         'Access-Control-Allow-Methods': 'POST',
