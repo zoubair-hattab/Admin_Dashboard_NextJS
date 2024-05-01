@@ -52,9 +52,17 @@ export async function POST(req: NextRequest) {
         'Access-Control-Allow-Methods': 'POST',
         'Access-Control-Allow-Headers': 'Content-Type, Authorization',
       },
+      status: 200,
     });
   } catch (err) {
     console.log('[checkout_POST]', err);
-    return new NextResponse('Internal Server Error', { status: 500 });
+    return new NextResponse('Internal Server Error', {
+      headers: {
+        'Access-Control-Allow-Origin': '*',
+        'Access-Control-Allow-Methods': 'POST',
+        'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+      },
+      status: 500,
+    });
   }
 }
